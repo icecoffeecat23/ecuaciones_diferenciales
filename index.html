@@ -1,0 +1,891 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Misterios Espaciales - Cálculo de Raíces</title>
+    <link href="https://fonts.googleapis.com/css2?family=Lekton:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <style>
+        :root {
+            --color-primary: #205D67;
+            --color-secondary: #639A67;
+            --color-light: #D8EBB5;
+            --color-accent: #D9BF77;
+        }
+        
+        body {
+            font-family: 'Lekton', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background-color: var(--color-primary);
+            color: white;
+            padding: 20px 0;
+            text-align: center;
+            border-bottom: 5px solid var(--color-accent);
+        }
+        
+        h1, h2, h3 {
+            margin-top: 0;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+        }
+        
+        h2 {
+            color: var(--color-primary);
+            font-size: 2rem;
+        }
+        
+        h3 {
+            color: var(--color-secondary);
+            font-size: 1.5rem;
+        }
+        
+        .tab-container {
+            margin: 20px 0;
+        }
+        
+        .tab-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            margin-bottom: 20px;
+        }
+        
+        .tab-btn {
+            background-color: var(--color-secondary);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            font-family: 'Lekton', sans-serif;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+        
+        .tab-btn:hover {
+            background-color: var(--color-primary);
+        }
+        
+        .tab-btn.active {
+            background-color: var(--color-primary);
+            font-weight: bold;
+        }
+        
+        .tab-content {
+            display: none;
+            background-color: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .mystery-card {
+            background-color: var(--color-light);
+            padding: 20px;
+            margin-bottom: 20px;
+            border-left: 5px solid var(--color-accent);
+        }
+        
+        .solution-section {
+            background-color: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .method {
+            margin-bottom: 30px;
+            padding: 15px;
+            background-color: #f9f9f9;
+            border-radius: 5px;
+        }
+        
+        .method h4 {
+            color: var(--color-primary);
+            margin-top: 0;
+        }
+        
+        .chart-container {
+            width: 100%;
+            height: 400px;
+            margin: 20px 0;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        
+        th, td {
+            padding: 12px;
+            text-align: left;
+        }
+        
+        th {
+            background-color: var(--color-primary);
+            color: white;
+        }
+        
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        
+        .input-group {
+            margin: 15px 0;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-family: 'Lekton', sans-serif;
+        }
+        
+        button {
+            background-color: var(--color-secondary);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            font-family: 'Lekton', sans-serif;
+            font-size: 1rem;
+            transition: all 0.3s;
+            margin: 5px 0;
+        }
+        
+        button:hover {
+            background-color: var(--color-primary);
+        }
+        
+        .conclusion {
+            background-color: var(--color-light);
+            padding: 20px;
+            margin-top: 20px;
+            border-radius: 5px;
+        }
+        
+        footer {
+            background-color: var(--color-primary);
+            color: white;
+            text-align: center;
+            padding: 20px 0;
+            margin-top: 40px;
+        }
+        
+        @media (max-width: 768px) {
+            .tab-buttons {
+                flex-direction: column;
+            }
+            
+            .tab-btn {
+                width: 100%;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            h2 {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>Misterios Espaciales Resueltos con Cálculo de Raíces</h1>
+            <p>Explora tres intrigantes problemas del espacio resueltos mediante métodos numéricos</p>
+        </div>
+    </header>
+    
+    <div class="container">
+        <div class="tab-container">
+            <div class="tab-buttons">
+                <button class="tab-btn active" onclick="openTab(event, 'tab1')">Misterio 1: Órbita Perdida</button>
+                <button class="tab-btn" onclick="openTab(event, 'tab2')">Misterio 2: Impacto Inminente</button>
+                <button class="tab-btn" onclick="openTab(event, 'tab3')">Misterio 3: Combustible Crítico</button>
+            </div>
+            
+            <!-- TAB 1: Misterio de la Órbita Perdida -->
+            <div id="tab1" class="tab-content active">
+                <div class="mystery-card">
+                    <h2>Misterio 1: La Órbita Perdida del Satélite Kepler-442</h2>
+                    <p>El satélite de observación Kepler-442 ha desaparecido de su órbita programada. Los datos telemetricos indican que su posición sigue la función:</p>
+                    <p><strong>f(t) = t³ - 6t² + 11t - 6.1</strong></p>
+                    <p>Donde t es el tiempo en horas y f(t) es la desviación en kilómetros de la órbita esperada. Necesitamos encontrar el momento exacto (t) cuando el satélite cruzará nuevamente su órbita esperada (f(t) = 0) para recuperar el control.</p>
+                    <div class="input-group">
+                        <label for="initial-guess1">Valor inicial (t<sub>0</sub>):</label>
+                        <input type="number" id="initial-guess1" step="0.1" value="3.5">
+                        <label for="tolerance1">Tolerancia:</label>
+                        <input type="number" id="tolerance1" step="0.0001" value="0.0001">
+                        <button onclick="solveMystery1()">Resolver Misterio</button>
+                    </div>
+                </div>
+                
+                <div id="solution1" class="solution-section" style="display:none;">
+                    <h3>Solución al Misterio de la Órbita Perdida</h3>
+                    <p>La función que describe la desviación orbital es: <strong>f(t) = t³ - 6t² + 11t - 6.1</strong></p>
+                    
+                    <div class="method">
+                        <h4>Método de Bisección</h4>
+                        <p>Intervalo inicial: [3.0, 4.0]</p>
+                        <div id="bisection-steps1" class="steps"></div>
+                        <div class="chart-container" id="bisection-chart1"></div>
+                    </div>
+                    
+                    <div class="method">
+                        <h4>Método de Newton-Raphson</h4>
+                        <p>Valor inicial: t<sub>0</sub> = <span id="newton-initial1">3.5</span></p>
+                        <div id="newton-steps1" class="steps"></div>
+                        <div class="chart-container" id="newton-chart1"></div>
+                    </div>
+                    
+                    <div class="method">
+                        <h4>Método de la Secante</h4>
+                        <p>Valores iniciales: t<sub>0</sub> = 3.0, t<sub>1</sub> = 4.0</p>
+                        <div id="secant-steps1" class="steps"></div>
+                        <div class="chart-container" id="secant-chart1"></div>
+                    </div>
+                    
+                    <div class="method">
+                        <h4>Método del Punto Fijo</h4>
+                        <p>Función de iteración: g(t) = (6t² - 11t + 6.1)<sup>1/3</sup></p>
+                        <p>Valor inicial: t<sub>0</sub> = 3.5</p>
+                        <div id="fixedpoint-steps1" class="steps"></div>
+                        <div class="chart-container" id="fixedpoint-chart1"></div>
+                    </div>
+                    
+                    <table id="comparison-table1">
+                        <thead>
+                            <tr>
+                                <th>Método</th>
+                                <th>Raíz Aproximada (t)</th>
+                                <th>Iteraciones</th>
+                                <th>Error Final</th>
+                                <th>Tiempo de Cálculo (ms)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Datos se llenarán con JavaScript -->
+                        </tbody>
+                    </table>
+                    
+                    <div class="conclusion">
+                        <h4>Conclusión del Misterio</h4>
+                        <p>Después de aplicar los cuatro métodos numéricos, determinamos que el satélite Kepler-442 cruzará su órbita esperada aproximadamente a las <strong id="root-time1">3.0467</strong> horas desde el inicio de la desviación.</p>
+                        <p>El método más eficiente para este problema fue <strong id="best-method1">Newton-Raphson</strong>, que convergió más rápidamente a la solución con menos iteraciones.</p>
+                        <p>Con esta información, el equipo de control de misión puede ahora programar las maniobras correctivas para recuperar el satélite.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- TAB 2: Misterio del Impacto Inminente -->
+            <div id="tab2" class="tab-content">
+                <div class="mystery-card">
+                    <h2>Misterio 2: El Impacto Inminente del Meteorito 2023-XF</h2>
+                    <p>Un meteorito potencialmente peligroso se acerca a la Tierra. Su trayectoria sigue la función:</p>
+                    <p><strong>f(t) = e<sup>-0.1t</sup> - 0.5t</strong></p>
+                    <p>Donde t es el tiempo en días y f(t) es la distancia en unidades astronómicas (UA) a la Tierra. Necesitamos determinar el momento exacto (t) cuando el meteorito alcanzará la distancia crítica de 0 UA (impacto).</p>
+                    <div class="input-group">
+                        <label for="initial-guess2">Valor inicial (t<sub>0</sub>):</label>
+                        <input type="number" id="initial-guess2" step="0.1" value="1.0">
+                        <label for="tolerance2">Tolerancia:</label>
+                        <input type="number" id="tolerance2" step="0.0001" value="0.0001">
+                        <button onclick="solveMystery2()">Resolver Misterio</button>
+                    </div>
+                </div>
+                
+                <div id="solution2" class="solution-section" style="display:none;">
+                    <h3>Solución al Misterio del Impacto Inminente</h3>
+                    <p>La función que describe la distancia del meteorito es: <strong>f(t) = e<sup>-0.1t</sup> - 0.5t</strong></p>
+                    
+                    <div class="method">
+                        <h4>Método de Bisección</h4>
+                        <p>Intervalo inicial: [0.5, 1.5]</p>
+                        <div id="bisection-steps2" class="steps"></div>
+                        <div class="chart-container" id="bisection-chart2"></div>
+                    </div>
+                    
+                    <div class="method">
+                        <h4>Método de Newton-Raphson</h4>
+                        <p>Valor inicial: t<sub>0</sub> = <span id="newton-initial2">1.0</span></p>
+                        <div id="newton-steps2" class="steps"></div>
+                        <div class="chart-container" id="newton-chart2"></div>
+                    </div>
+                    
+                    <div class="method">
+                        <h4>Método de la Secante</h4>
+                        <p>Valores iniciales: t<sub>0</sub> = 0.5, t<sub>1</sub> = 1.5</p>
+                        <div id="secant-steps2" class="steps"></div>
+                        <div class="chart-container" id="secant-chart2"></div>
+                    </div>
+                    
+                    <div class="method">
+                        <h4>Método del Punto Fijo</h4>
+                        <p>Función de iteración: g(t) = -10·ln(0.5t)</p>
+                        <p>Valor inicial: t<sub>0</sub> = 1.0</p>
+                        <div id="fixedpoint-steps2" class="steps"></div>
+                        <div class="chart-container" id="fixedpoint-chart2"></div>
+                    </div>
+                    
+                    <table id="comparison-table2">
+                        <thead>
+                            <tr>
+                                <th>Método</th>
+                                <th>Raíz Aproximada (t)</th>
+                                <th>Iteraciones</th>
+                                <th>Error Final</th>
+                                <th>Tiempo de Cálculo (ms)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Datos se llenarán con JavaScript -->
+                        </tbody>
+                    </table>
+                    
+                    <div class="conclusion">
+                        <h4>Conclusión del Misterio</h4>
+                        <p>El análisis numérico revela que el meteorito 2023-XF impactará la Tierra en aproximadamente <strong id="root-time2">1.1183</strong> días si no se toman medidas.</p>
+                        <p>El método <strong id="best-method2">Newton-Raphson</strong> demostró ser el más eficiente para este escenario, proporcionando una solución precisa con un mínimo de iteraciones.</p>
+                        <p>Esta información crítica permite a las agencias espaciales coordinar esfuerzos para desviar el meteorito o preparar medidas de protección civil.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- TAB 3: Misterio del Combustible Crítico -->
+            <div id="tab3" class="tab-content">
+                <div class="mystery-card">
+                    <h2>Misterio 3: El Dilema del Combustible Crítico en la Misión Artemis</h2>
+                    <p>La nave Artemis tiene un consumo de combustible descrito por:</p>
+                    <p><strong>f(t) = 0.5t<sup>4</sup> - 4t<sup>3</sup> + 10t<sup>2</sup> - 8t + 1.5</strong></p>
+                    <p>Donde t es el tiempo en horas y f(t) es el porcentaje de combustible restante. Necesitamos encontrar el momento exacto (t) cuando el combustible alcanzará el 1.5% (f(t) = 1.5) para programar el reabastecimiento.</p>
+                    <div class="input-group">
+                        <label for="initial-guess3">Valor inicial (t<sub>0</sub>):</label>
+                        <input type="number" id="initial-guess3" step="0.1" value="2.5">
+                        <label for="tolerance3">Tolerancia:</label>
+                        <input type="number" id="tolerance3" step="0.0001" value="0.0001">
+                        <button onclick="solveMystery3()">Resolver Misterio</button>
+                    </div>
+                </div>
+                
+                <div id="solution3" class="solution-section" style="display:none;">
+                    <h3>Solución al Misterio del Combustible Crítico</h3>
+                    <p>La función que describe el combustible es: <strong>f(t) = 0.5t<sup>4</sup> - 4t<sup>3</sup> + 10t<sup>2</sup> - 8t + 1.5</strong></p>
+                    
+                    <div class="method">
+                        <h4>Método de Bisección</h4>
+                        <p>Intervalo inicial: [2.0, 3.0]</p>
+                        <div id="bisection-steps3" class="steps"></div>
+                        <div class="chart-container" id="bisection-chart3"></div>
+                    </div>
+                    
+                    <div class="method">
+                        <h4>Método de Newton-Raphson</h4>
+                        <p>Valor inicial: t<sub>0</sub> = <span id="newton-initial3">2.5</span></p>
+                        <div id="newton-steps3" class="steps"></div>
+                        <div class="chart-container" id="newton-chart3"></div>
+                    </div>
+                    
+                    <div class="method">
+                        <h4>Método de la Secante</h4>
+                        <p>Valores iniciales: t<sub>0</sub> = 2.0, t<sub>1</sub> = 3.0</p>
+                        <div id="secant-steps3" class="steps"></div>
+                        <div class="chart-container" id="secant-chart3"></div>
+                    </div>
+                    
+                    <div class="method">
+                        <h4>Método del Punto Fijo</h4>
+                        <p>Función de iteración: g(t) = (4t³ - 10t² + 8t)/(0.5t³)</p>
+                        <p>Valor inicial: t<sub>0</sub> = 2.5</p>
+                        <div id="fixedpoint-steps3" class="steps"></div>
+                        <div class="chart-container" id="fixedpoint-chart3"></div>
+                    </div>
+                    
+                    <table id="comparison-table3">
+                        <thead>
+                            <tr>
+                                <th>Método</th>
+                                <th>Raíz Aproximada (t)</th>
+                                <th>Iteraciones</th>
+                                <th>Error Final</th>
+                                <th>Tiempo de Cálculo (ms)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Datos se llenarán con JavaScript -->
+                        </tbody>
+                    </table>
+                    
+                    <div class="conclusion">
+                        <h4>Conclusión del Misterio</h4>
+                        <p>El análisis indica que la nave Artemis alcanzará el nivel crítico de combustible (1.5%) en aproximadamente <strong id="root-time3">2.2925</strong> horas.</p>
+                        <p>Para este problema polinómico, el método <strong id="best-method3">Newton-Raphson</strong> fue el más efectivo, aprovechando la suavidad de la función y su derivada conocida.</p>
+                        <p>Con esta información, el control de misión puede programar con precisión la operación de reabastecimiento para garantizar la seguridad de la tripulación.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <footer>
+        <div class="container">
+            <p>© 2023 Misterios Espaciales Resueltos con Métodos Numéricos</p>
+            <p>Desarrollado para el curso de Análisis Numérico</p>
+        </div>
+    </footer>
+    
+    <script>
+        // Función para cambiar entre pestañas
+        function openTab(evt, tabName) {
+            var i, tabcontent, tabbuttons;
+            
+            tabcontent = document.getElementsByClassName("tab-content");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].classList.remove("active");
+            }
+            
+            tabbuttons = document.getElementsByClassName("tab-btn");
+            for (i = 0; i < tabbuttons.length; i++) {
+                tabbuttons[i].classList.remove("active");
+            }
+            
+            document.getElementById(tabName).classList.add("active");
+            evt.currentTarget.classList.add("active");
+        }
+        
+        // Funciones para resolver los misterios
+        function solveMystery1() {
+            // Mostrar sección de solución
+            document.getElementById('solution1').style.display = 'block';
+            
+            // Obtener parámetros de entrada
+            const t0 = parseFloat(document.getElementById('initial-guess1').value);
+            const tolerance = parseFloat(document.getElementById('tolerance1').value);
+            
+            // Definir la función y su derivada
+            const f = t => t**3 - 6*t**2 + 11*t - 6.1;
+            const df = t => 3*t**2 - 12*t + 11;
+            
+            // Resolver con diferentes métodos
+            const bisectionResult = bisectionMethod(f, 3.0, 4.0, tolerance);
+            const newtonResult = newtonMethod(f, df, t0, tolerance);
+            const secantResult = secantMethod(f, 3.0, 4.0, tolerance);
+            const fixedPointResult = fixedPointMethod(t => Math.pow(6*t**2 - 11*t + 6.1, 1/3), t0, tolerance);
+            
+            // Mostrar resultados
+            displayResults('bisection-steps1', bisectionResult.steps, 'Bisección');
+            displayResults('newton-steps1', newtonResult.steps, 'Newton-Raphson');
+            displayResults('secant-steps1', secantResult.steps, 'Secante');
+            displayResults('fixedpoint-steps1', fixedPointResult.steps, 'Punto Fijo');
+            
+            // Actualizar tabla comparativa
+            updateComparisonTable('comparison-table1', [
+                {method: 'Bisección', root: bisectionResult.root, iterations: bisectionResult.iterations, error: bisectionResult.error, time: bisectionResult.time},
+                {method: 'Newton-Raphson', root: newtonResult.root, iterations: newtonResult.iterations, error: newtonResult.error, time: newtonResult.time},
+                {method: 'Secante', root: secantResult.root, iterations: secantResult.iterations, error: secantResult.error, time: secantResult.time},
+                {method: 'Punto Fijo', root: fixedPointResult.root, iterations: fixedPointResult.iterations, error: fixedPointResult.error, time: fixedPointResult.time}
+            ]);
+            
+            // Actualizar conclusión
+            document.getElementById('root-time1').textContent = newtonResult.root.toFixed(4);
+            document.getElementById('best-method1').textContent = 'Newton-Raphson';
+            
+            // Graficar funciones
+            plotFunction('bisection-chart1', f, bisectionResult.root - 1, bisectionResult.root + 1, 'Método de Bisección', bisectionResult.steps);
+            plotFunction('newton-chart1', f, newtonResult.root - 1, newtonResult.root + 1, 'Método de Newton-Raphson', newtonResult.steps);
+            plotFunction('secant-chart1', f, secantResult.root - 1, secantResult.root + 1, 'Método de la Secante', secantResult.steps);
+            plotFunction('fixedpoint-chart1', f, fixedPointResult.root - 1, fixedPointResult.root + 1, 'Método del Punto Fijo', fixedPointResult.steps);
+        }
+        
+        function solveMystery2() {
+            document.getElementById('solution2').style.display = 'block';
+            
+            const t0 = parseFloat(document.getElementById('initial-guess2').value);
+            const tolerance = parseFloat(document.getElementById('tolerance2').value);
+            
+            const f = t => Math.exp(-0.1*t) - 0.5*t;
+            const df = t => -0.1*Math.exp(-0.1*t) - 0.5;
+            
+            const bisectionResult = bisectionMethod(f, 0.5, 1.5, tolerance);
+            const newtonResult = newtonMethod(f, df, t0, tolerance);
+            const secantResult = secantMethod(f, 0.5, 1.5, tolerance);
+            const fixedPointResult = fixedPointMethod(t => -10*Math.log(0.5*t), t0, tolerance);
+            
+            displayResults('bisection-steps2', bisectionResult.steps, 'Bisección');
+            displayResults('newton-steps2', newtonResult.steps, 'Newton-Raphson');
+            displayResults('secant-steps2', secantResult.steps, 'Secante');
+            displayResults('fixedpoint-steps2', fixedPointResult.steps, 'Punto Fijo');
+            
+            updateComparisonTable('comparison-table2', [
+                {method: 'Bisección', root: bisectionResult.root, iterations: bisectionResult.iterations, error: bisectionResult.error, time: bisectionResult.time},
+                {method: 'Newton-Raphson', root: newtonResult.root, iterations: newtonResult.iterations, error: newtonResult.error, time: newtonResult.time},
+                {method: 'Secante', root: secantResult.root, iterations: secantResult.iterations, error: secantResult.error, time: secantResult.time},
+                {method: 'Punto Fijo', root: fixedPointResult.root, iterations: fixedPointResult.iterations, error: fixedPointResult.error, time: fixedPointResult.time}
+            ]);
+            
+            document.getElementById('root-time2').textContent = newtonResult.root.toFixed(4);
+            document.getElementById('best-method2').textContent = 'Newton-Raphson';
+            
+            plotFunction('bisection-chart2', f, 0, 2, 'Método de Bisección', bisectionResult.steps);
+            plotFunction('newton-chart2', f, 0, 2, 'Método de Newton-Raphson', newtonResult.steps);
+            plotFunction('secant-chart2', f, 0, 2, 'Método de la Secante', secantResult.steps);
+            plotFunction('fixedpoint-chart2', f, 0, 2, 'Método del Punto Fijo', fixedPointResult.steps);
+        }
+        
+        function solveMystery3() {
+            document.getElementById('solution3').style.display = 'block';
+            
+            const t0 = parseFloat(document.getElementById('initial-guess3').value);
+            const tolerance = parseFloat(document.getElementById('tolerance3').value);
+            
+            const f = t => 0.5*Math.pow(t,4) - 4*Math.pow(t,3) + 10*Math.pow(t,2) - 8*t + 1.5;
+            const df = t => 2*Math.pow(t,3) - 12*Math.pow(t,2) + 20*t - 8;
+            
+            const bisectionResult = bisectionMethod(f, 2.0, 3.0, tolerance);
+            const newtonResult = newtonMethod(f, df, t0, tolerance);
+            const secantResult = secantMethod(f, 2.0, 3.0, tolerance);
+            const fixedPointResult = fixedPointMethod(t => (4*Math.pow(t,3) - 10*Math.pow(t,2) + 8*t)/(0.5*Math.pow(t,3)), t0, tolerance);
+            
+            displayResults('bisection-steps3', bisectionResult.steps, 'Bisección');
+            displayResults('newton-steps3', newtonResult.steps, 'Newton-Raphson');
+            displayResults('secant-steps3', secantResult.steps, 'Secante');
+            displayResults('fixedpoint-steps3', fixedPointResult.steps, 'Punto Fijo');
+            
+            updateComparisonTable('comparison-table3', [
+                {method: 'Bisección', root: bisectionResult.root, iterations: bisectionResult.iterations, error: bisectionResult.error, time: bisectionResult.time},
+                {method: 'Newton-Raphson', root: newtonResult.root, iterations: newtonResult.iterations, error: newtonResult.error, time: newtonResult.time},
+                {method: 'Secante', root: secantResult.root, iterations: secantResult.iterations, error: secantResult.error, time: secantResult.time},
+                {method: 'Punto Fijo', root: fixedPointResult.root, iterations: fixedPointResult.iterations, error: fixedPointResult.error, time: fixedPointResult.time}
+            ]);
+            
+            document.getElementById('root-time3').textContent = newtonResult.root.toFixed(4);
+            document.getElementById('best-method3').textContent = 'Newton-Raphson';
+            
+            plotFunction('bisection-chart3', f, 1.5, 3.5, 'Método de Bisección', bisectionResult.steps);
+            plotFunction('newton-chart3', f, 1.5, 3.5, 'Método de Newton-Raphson', newtonResult.steps);
+            plotFunction('secant-chart3', f, 1.5, 3.5, 'Método de la Secante', secantResult.steps);
+            plotFunction('fixedpoint-chart3', f, 1.5, 3.5, 'Método del Punto Fijo', fixedPointResult.steps);
+        }
+        
+        // Métodos numéricos
+        function bisectionMethod(f, a, b, tolerance, maxIterations = 100) {
+            const startTime = performance.now();
+            let steps = [];
+            let iterations = 0;
+            let c, fa, fb, fc, error;
+            
+            fa = f(a);
+            fb = f(b);
+            
+            if (fa * fb >= 0) {
+                return {root: NaN, iterations: 0, error: NaN, steps: [], time: 0};
+            }
+            
+            error = b - a;
+            
+            while (error > tolerance && iterations < maxIterations) {
+                error = error / 2;
+                c = a + error;
+                fc = f(c);
+                steps.push({a, b, c, fa, fb, fc, error, iteration: iterations + 1});
+                
+                if (fa * fc < 0) {
+                    b = c;
+                    fb = fc;
+                } else {
+                    a = c;
+                    fa = fc;
+                }
+                
+                iterations++;
+            }
+            
+            const endTime = performance.now();
+            return {
+                root: c,
+                iterations,
+                error,
+                steps,
+                time: endTime - startTime
+            };
+        }
+        
+        function newtonMethod(f, df, x0, tolerance, maxIterations = 100) {
+            const startTime = performance.now();
+            let steps = [];
+            let iterations = 0;
+            let x = x0;
+            let fx = f(x);
+            let dfx = df(x);
+            let error = Math.abs(fx);
+            let xPrev;
+            
+            while (error > tolerance && iterations < maxIterations) {
+                xPrev = x;
+                x = x - fx / dfx;
+                fx = f(x);
+                dfx = df(x);
+                error = Math.abs(x - xPrev);
+                steps.push({x, fx, dfx, error, iteration: iterations + 1});
+                iterations++;
+            }
+            
+            const endTime = performance.now();
+            return {
+                root: x,
+                iterations,
+                error,
+                steps,
+                time: endTime - startTime
+            };
+        }
+        
+        function secantMethod(f, x0, x1, tolerance, maxIterations = 100) {
+            const startTime = performance.now();
+            let steps = [];
+            let iterations = 0;
+            let x2, fx0, fx1, error;
+            
+            fx0 = f(x0);
+            fx1 = f(x1);
+            error = Math.abs(x1 - x0);
+            
+            while (error > tolerance && iterations < maxIterations) {
+                if (Math.abs(fx0 - fx1) < 1e-10) break; // Evitar división por cero
+                
+                x2 = x1 - fx1 * (x1 - x0) / (fx1 - fx0);
+                error = Math.abs(x2 - x1);
+                
+                steps.push({x0, x1, x2, fx0, fx1, error, iteration: iterations + 1});
+                
+                x0 = x1;
+                fx0 = fx1;
+                x1 = x2;
+                fx1 = f(x1);
+                
+                iterations++;
+            }
+            
+            const endTime = performance.now();
+            return {
+                root: x1,
+                iterations,
+                error,
+                steps,
+                time: endTime - startTime
+            };
+        }
+        
+        function fixedPointMethod(g, x0, tolerance, maxIterations = 100) {
+            const startTime = performance.now();
+            let steps = [];
+            let iterations = 0;
+            let x1, error;
+            
+            error = tolerance * 2; // Para asegurar que entre al menos una vez
+            
+            while (error > tolerance && iterations < maxIterations) {
+                x1 = g(x0);
+                error = Math.abs(x1 - x0);
+                steps.push({x0, x1, error, iteration: iterations + 1});
+                x0 = x1;
+                iterations++;
+            }
+            
+            const endTime = performance.now();
+            return {
+                root: x1,
+                iterations,
+                error,
+                steps,
+                time: endTime - startTime
+            };
+        }
+        
+        // Funciones auxiliares para mostrar resultados
+        function displayResults(containerId, steps, methodName) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = '';
+            
+            if (steps.length === 0) {
+                container.innerHTML = '<p>No se pudo encontrar una solución con este método.</p>';
+                return;
+            }
+            
+            let html = '<div style="overflow-x:auto;"><table><thead><tr>';
+            
+            // Encabezados de la tabla según el método
+            if (methodName === 'Bisección') {
+                html += '<th>Iteración</th><th>a</th><th>b</th><th>c</th><th>f(a)</th><th>f(b)</th><th>f(c)</th><th>Error</th></tr></thead><tbody>';
+                steps.forEach(step => {
+                    html += `<tr>
+                        <td>${step.iteration}</td>
+                        <td>${step.a.toFixed(6)}</td>
+                        <td>${step.b.toFixed(6)}</td>
+                        <td>${step.c.toFixed(6)}</td>
+                        <td>${step.fa.toFixed(6)}</td>
+                        <td>${step.fb.toFixed(6)}</td>
+                        <td>${step.fc.toFixed(6)}</td>
+                        <td>${step.error.toFixed(6)}</td>
+                    </tr>`;
+                });
+            } else if (methodName === 'Newton-Raphson') {
+                html += '<th>Iteración</th><th>x</th><th>f(x)</th><th>f\'(x)</th><th>Error</th></tr></thead><tbody>';
+                steps.forEach(step => {
+                    html += `<tr>
+                        <td>${step.iteration}</td>
+                        <td>${step.x.toFixed(6)}</td>
+                        <td>${step.fx.toFixed(6)}</td>
+                        <td>${step.dfx.toFixed(6)}</td>
+                        <td>${step.error.toFixed(6)}</td>
+                    </tr>`;
+                });
+            } else if (methodName === 'Secante') {
+                html += '<th>Iteración</th><th>x0</th><th>x1</th><th>x2</th><th>f(x0)</th><th>f(x1)</th><th>Error</th></tr></thead><tbody>';
+                steps.forEach(step => {
+                    html += `<tr>
+                        <td>${step.iteration}</td>
+                        <td>${step.x0.toFixed(6)}</td>
+                        <td>${step.x1.toFixed(6)}</td>
+                        <td>${step.x2.toFixed(6)}</td>
+                        <td>${step.fx0.toFixed(6)}</td>
+                        <td>${step.fx1.toFixed(6)}</td>
+                        <td>${step.error.toFixed(6)}</td>
+                    </tr>`;
+                });
+            } else if (methodName === 'Punto Fijo') {
+                html += '<th>Iteración</th><th>x0</th><th>x1</th><th>Error</th></tr></thead><tbody>';
+                steps.forEach(step => {
+                    html += `<tr>
+                        <td>${step.iteration}</td>
+                        <td>${step.x0.toFixed(6)}</td>
+                        <td>${step.x1.toFixed(6)}</td>
+                        <td>${step.error.toFixed(6)}</td>
+                    </tr>`;
+                });
+            }
+            
+            html += '</tbody></table></div>';
+            container.innerHTML = html;
+        }
+        
+        function updateComparisonTable(tableId, data) {
+            const table = document.getElementById(tableId);
+            const tbody = table.querySelector('tbody');
+            tbody.innerHTML = '';
+            
+            data.forEach(row => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${row.method}</td>
+                    <td>${row.root.toFixed(6)}</td>
+                    <td>${row.iterations}</td>
+                    <td>${row.error.toExponential(4)}</td>
+                    <td>${row.time.toFixed(2)}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+        
+        function plotFunction(containerId, f, xMin, xMax, title, steps) {
+            if (steps.length === 0) return;
+            
+            // Generar datos para la función
+            const stepSize = (xMax - xMin) / 100;
+            const xValues = [];
+            const yValues = [];
+            
+            for (let x = xMin; x <= xMax; x += stepSize) {
+                xValues.push(x);
+                yValues.push(f(x));
+            }
+            
+            // Configurar trazos para los pasos del método
+            const stepTraces = [];
+            if (steps[0].c !== undefined) { // Bisección
+                steps.forEach(step => {
+                    stepTraces.push({
+                        x: [step.a, step.b],
+                        y: [0, 0],
+                        mode: 'lines',
+                        line: {color: 'red', width: 2, dash: 'dot'},
+                        name: `Iteración ${step.iteration}`
+                    });
+                });
+            } else if (steps[0].x !== undefined && steps[0].dfx !== undefined) { // Newton
+                steps.forEach(step => {
+                    const tangentLine = x => f(step.x) + step.dfx * (x - step.x);
+                    stepTraces.push({
+                        x: xValues,
+                        y: xValues.map(tangentLine),
+                        mode: 'lines',
+                        line: {color: 'red', width: 1, dash: 'dot'},
+                        name: `Tangente ${step.iteration}`
+                    });
+                });
+            }
+            
+            // Crear gráfico
+            const trace1 = {
+                x: xValues,
+                y: yValues,
+                mode: 'lines',
+                name: 'Función',
+                line: {color: 'blue', width: 2}
+            };
+            
+            const trace2 = {
+                x: [steps[steps.length-1].root || steps[steps.length-1].x || steps[steps.length-1].x1],
+                y: [0],
+                mode: 'markers',
+                name: 'Raíz',
+                marker: {color: 'green', size: 10}
+            };
+            
+            const layout = {
+                title: title,
+                xaxis: {title: 'x'},
+                yaxis: {title: 'f(x)'},
+                showlegend: true
+            };
+            
+            Plotly.newPlot(containerId, [trace1, trace2, ...stepTraces], layout);
+        }
+    </script>
+</body>
+</html>
